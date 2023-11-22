@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Leitor de QR Code</title>
+        <style>
+            #video {
+                width: 100%;
+                max-width: 600px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Leitor de QR Code</h1>
+        <label for="cameraList">Selecione a câmera:</label>
+        <select id="cameraList"></select>
+        <br />
+        <video id="video" autoplay></video>
+        <div class=""></div>
+        <button>Enviar Link</button>
+
+        <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
+        <script src="scriptCam.js"></script>
+        <script src="{{ url_for('serve_js', filename='script.js') }}"></script>
+        <script src="{{ url_for('serve_js', filename='scriptCam.js') }}"></script>
+    </body>
+</html>
