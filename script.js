@@ -1,47 +1,47 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const resultDiv = document.getElementById("result");
-    const cameraSelect = document.getElementById("cameraSelect");
-    navigator.mediaDevices
-        .enumerateDevices()
-        .then(function (devices) {
-            devices.forEach(function (device) {
-                if (device.kind === "videoinput") {
-                    const option = document.createElement("option");
-                    option.value = device.deviceId;
-                    option.text =
-                        device.label ||
-                        "Câmera " + (cameraSelect.length + 1);
-                    cameraSelect.appendChild(option);
-                }
-            });
-        })
-        .catch(function (error) {
-            console.error("Erro ao enumerar dispositivos: ", error);
-        });
+    const video = document.getElementById('videoElement');
+    const cameraList = document.getElementById('cameraList');
 
-    function startCamera() {
-        const selectedCamera = cameraSelect.value;
-        const constraints = {
-            video: {
-                deviceId: selectedCamera
-                    ? { exact: selectedCamera }
-                    : undefined,
-            },
-        };
-
-        navigator.mediaDevices
-            .getUserMedia(constraints)
-            .then(function (stream) {
-                video.srcObject = stream;
+    // Verifica se o navegador suporta a API de mídia
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        // Lista todas as dispositivos de mídia (câmeras, microfones, etc.)
+        navigator.mediaDevices.enumerateDevices()
+            .then(devices => {
+                devices.forEach(device => {
+                    // Verifica se o dispositivo é uma câmera
+                    if (device.kind === 'videoinput') {
+                        // Adiciona a câmera à lista
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        option.text = device.label || `Câmera ${cameraList.options.length + 1}`;
+                        cameraList.appendChild(option);
+                    }
+                });
             })
-            .catch(function (error) {
-                console.error("Erro ao acessar a câmera: ", error);
+            .catch(err => {
+                console.error('Erro ao listar dispositivos de mídia:', err);
             });
+    } else {
+        console.error('A API de mídia não é suportada neste navegador.');
     }
 
-    cameraSelect.addEventListener("change", startCamera);
+    // Atualiza a fonte do vídeo quando o usuário seleciona uma câmera
+    cameraList.addEventListener('change', function() {
+        const selectedCameraId = cameraList.value;
+        const constraints = {
+            video: { deviceId: { exact: selectedCameraId } }
+        };
 
-    startCamera();
+        // Usa a API de mídia para acessar a câmera selecionada
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('Erro ao acessar a câmera:', err);
+            });
+    });
+});
     const video = document.getElementById("video");
 
     navigator.mediaDevices
