@@ -1,10 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.querySelector('#camera').addEventListener("click", function () {
     const resultDiv = document.getElementById("result");
-    
+    const selectedCameraId = document.querySelector("#cameraList").value
     const video = document.getElementById("video");
 
     navigator.mediaDevices
-        .getUserMedia({ video: { facingMode: "environment" } })
+        .getUserMedia({video: { deviceId: { exact: selectedCameraId } }})
         .then((stream) => {
             video.srcObject = stream;
             video.play();
