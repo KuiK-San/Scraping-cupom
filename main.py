@@ -71,7 +71,7 @@ def criarJson(url):
                 'medida': medida
             }
         
-        doc = json.dumps(doc, indent=4)
+        """ doc = json.dumps(doc, indent=4) """
         return doc
         
 

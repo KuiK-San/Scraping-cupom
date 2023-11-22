@@ -18,12 +18,12 @@
         <select id="cameraList"></select>
         <br />
         <video id="video" autoplay></video>
-        <div class=""></div>
-        <button>Enviar Link</button>
+        <div class="" id="link"></div>
+        <div class="" id="response"></div>
+        <button id="enviar" style="display: none">Enviar Link</button>
 
         <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
-        <script src="scriptCam.js"></script>
-        <script src="{{ url_for('serve_js', filename='script.js') }}"></script>
-        <script src="{{ url_for('serve_js', filename='scriptCam.js') }}"></script>
+        <script src="{{ script }}"></script>
+        <script src="{{ scriptCam }}"></script>
     </body>
 </html>

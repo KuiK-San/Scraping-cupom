@@ -43,9 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             if (code) {
-                document.querySelector(
-                    "div"
-                ).innerHTML = `QR Code detectado <span id="data-code">${code.data}</span>`;
+                setTimeout(() => {
+                    document.querySelector(
+                        "#link"
+                    ).innerHTML = `<p>QR Code detectado <span id="data-code">${code.data}</span></p>`;
+                    document.querySelector('#enviar').style.display = 'block'
+
+                }, 2000)
             }
 
             requestAnimationFrame(tick);
@@ -53,4 +57,21 @@ document.addEventListener("DOMContentLoaded", () => {
             requestAnimationFrame(tick);
         }
     }
+    document.querySelector('#enviar').addEventListener('click', () => {
+        let url = document.querySelector("#data-code").textContent
+        document.querySelector('#response').innerHTML = `<p>Enviando nota...</p>`
+        fetch('/api/NFScrapping', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({url: url})
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.querySelector('#response').innerHTML = `<p>${data}</p>`
+            console.log(data)
+        })
+        .catch(error => console.error(error))
+    })
 });
