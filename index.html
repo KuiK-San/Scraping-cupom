@@ -1,30 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Leitor de QR Code</title>
-        <style>
-            #video {
-                width: 100%;
-                max-width: 600px;
-                margin: auto;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Leitor de QR Code</h1>
-        <label for="cameraList">Selecione a câmera:</label>
-        <select id="cameraList"></select>
-        <button id="camera">Abrir Camera</button>
-        <br />
-        <video id="video" autoplay></video>
-        <div class="" id="link"></div>
-        <div class="" id="response"></div>
-        <button id="enviar" style="display: none">Enviar Link</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Selector</title>
+</head>
+<body>
+    <h1>Selecione uma câmera</h1>
+    <select id="cameraList"></select>
+    <button onclick="startCamera()">Iniciar Câmera</button>
+    <video id="cameraFeed" width="640" height="480" autoplay></video>
 
-        <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
-        <script src="script.js"></script>
-        <script src="scriptCam.js"></script>
-    </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const cameraList = document.getElementById('cameraList');
+            const cameraFeed = document.getElementById('cameraFeed');
+
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(device => device.kind === 'videoinput');
+
+                cameras.forEach(camera => {
+                    const option = document.createElement('option');
+                    option.value = camera.deviceId;
+                    option.text = camera.label || `Camera ${cameraList.length + 1}`;
+                    cameraList.add(option);
+                });
+            } catch (error) {
+                console.error('Error enumerating devices:', error);
+            }
+        });
+
+        async function startCamera() {
+            const cameraList = document.getElementById('cameraList');
+            const cameraFeed = document.getElementById('cameraFeed');
+
+            const selectedCameraId = cameraList.value;
+
+            if (!selectedCameraId) {
+                alert('Selecione uma câmera antes de iniciar!');
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: selectedCameraId }
+                });
+
+                cameraFeed.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+            }
+        }
+    </script>
+</body>
 </html>
