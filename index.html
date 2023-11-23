@@ -9,7 +9,7 @@
     <h1>Selecione uma câmera</h1>
     <select id="cameraList" onchange="changeCamera()"></select>
     <button onclick="iniciarCam()">Iniciar Câmera</button>
-    <button onclick="alterarCam()">Alterar Câmera</button>
+    <button onclick="alterarCam()" id="alterar" style="display: none;">Alterar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
     <div class="cameras"></div>
     <div class="atual"></div>
@@ -33,6 +33,7 @@
             })
             .catch(erro => console.error(erro))
             document.querySelector('.cameras').innerHTML = dispositivos.length
+            document.querySelector('#alterar').style.display = 'block'
             
         }
         async function alterarCam(){
@@ -40,7 +41,7 @@
             if(atualDevice > dispositivos.length){
                 atualDevice = 0
             }
-            await navigator.mediaDevices.getUserMedia({video: {deviceId:'c2d97b1d5a43b31424b0bf67717910f19dae529a351ee455c641f6dc219774ab'}})
+            await navigator.mediaDevices.getUserMedia({video: {deviceId: '8748daa0eb4b29bfd0e8875c2463b7ab84ce6b273a5aeb176da74d4ee0391b5f'}})
             .then(stream => {
                 videoElement.srcObject = stream
                 videoElement.play()
