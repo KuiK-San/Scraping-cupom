@@ -11,6 +11,8 @@
     <button onclick="iniciarCam()">Iniciar Câmera</button>
     <button onclick="alterarCam()">Alterar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
+    <div class="cameras"></div>
+    <div class="atual"></div>
 
     <script>
         const cameraList = document.getElementById('cameraList');
@@ -30,6 +32,7 @@
                 videoElement.play()
             })
             .catch(erro => console.error(error))
+            document.querySelector('.cameras').innerHTML = dispositivos
             
         }
         async function alterarCam(){
@@ -43,6 +46,7 @@
                 videoElement.play()
             })
             .catch(erro => console.error(error))
+            document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
         }
 
         // async function enumerateCameras() {
