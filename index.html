@@ -12,6 +12,8 @@
     <video id="cameraFeed" width="640" height="480" autoplay></video>
 
     <script>
+        const cameraList = document.getElementById('cameraList');
+        cameraList.addEventListener('change', changeCamera)
         async function enumerateCameras() {
             const cameraList = document.getElementById('cameraList');
 
@@ -55,6 +57,8 @@
         async function startCamera() {
             await changeCamera();
         }
+
+
 
         document.addEventListener('DOMContentLoaded', enumerateCameras);
     </script>
