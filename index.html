@@ -20,7 +20,7 @@
             let device
 
             //cameras.forEach(camera => {
-              //  if(camera.label)
+            //  if(camera.label)
             //})
 
             
@@ -38,7 +38,7 @@
                     console.log(camera.label)
                     const option = document.createElement('option');
                     option.value = camera.deviceId;
-                    option.text = camera.label || `Camera ${cameraList.length + 1}`;
+                    option.text = camera.label;
                     cameraList.add(option);
                 });
             } catch (error) {
