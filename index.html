@@ -3,89 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera QR Code Scanner</title>
+    <title>Camera Selector</title>
 </head>
 <body>
     <h1>Selecione uma câmera</h1>
     <select id="cameraList" onchange="changeCamera()"></select>
-    <button onclick="startCamera()">Iniciar Câmera</button>
+    <button onclick="iniciarCam()">Iniciar Câmera</button>
+    <button onclick="alterarCam()">Alterar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
 
-    <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
     <script>
         const cameraList = document.getElementById('cameraList');
-        const cameraFeed = document.getElementById('cameraFeed');
-        let videoStream;
+        let dispositivos = []
+        let atualDevice = 0
+        const videoElement = document.querySelector('#cameraFeed')
 
-        async function enumerateCameras() {
-            await navigator.mediaDevices.getUserMedia({ video: true });
-            try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const cameras = devices.filter(device => device.kind === 'videoinput');
-
-                cameras.forEach(camera => {
-                    const option = document.createElement('option');
-                    option.value = camera.deviceId;
-                    option.text = camera.label;
-                    cameraList.add(option);
-                });
-            } catch (error) {
-                console.error('Error enumerating devices:', error);
+        async function iniciarCam() {
+            dispositivos = []
+            const devices = await navigator.mediaDevices.enumerateDevices()
+            const cameras = devices.filter(device => device.kind === 'videoinput');
+            cameras.forEach(dispositivo => {dispositivos.push(dispositivo.deviceId)})
+            
+            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[atualDevice]}})
+            .then(stream => {
+                videoElement.srcObject = stream
+                videoElement.play()
+            })
+            .catch(erro => console.error(error))
+            
+        }
+        async function alterarCam(){
+            atualDevice ++
+            if(atualDevice > dispositivos.length){
+                atualDevice = 0
             }
+            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[atualDevice]}})
+            .then(stream => {
+                videoElement.srcObject = stream
+                videoElement.play()
+            })
+            .catch(erro => console.error(error))
         }
 
-        async function changeCamera() {
-            const selectedCameraId = cameraList.value;
-
-            if (!selectedCameraId) {
-                alert('Selecione uma câmera antes de iniciar!');
-                return;
-            }
-
-            try {
-                if (videoStream) {
-                    videoStream.getTracks().forEach(track => track.stop());
-                }
-
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { deviceId: selectedCameraId }
-                });
-
-                videoStream = stream;
-                cameraFeed.srcObject = stream;
-            } catch (error) {
-                console.error('Error accessing camera:', error);
-            }
-        }
-
-        async function startCamera() {
-            await changeCamera();
-            startQRCodeScanner();
-        }
-
-        function startQRCodeScanner() {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-
-            const scan = () => {
-                canvas.width = cameraFeed.videoWidth;
-                canvas.height = cameraFeed.videoHeight;
-                context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
-
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-                if (code) {
-                    alert('QR Code lido: ' + code.data);
-                }
-
-                requestAnimationFrame(scan);
-            };
-
-            scan();
-        }
-
-        document.addEventListener('DOMContentLoaded', enumerateCameras);
+        // async function enumerateCameras() {
+        //     await navigator.mediaDevices.getUserMedia({video: true})
+        //     const cameraList = document.getElementById('cameraList');
+        //     
+        //     try {
+        //         const devices = await navigator.mediaDevices.enumerateDevices();
+        //         const cameras = devices.filter(device => device.kind === 'videoinput');
+        //         
+        //         cameras.forEach(camera => {
+        //             console.log(camera.label)
+        //             const option = document.createElement('option');
+        //             option.value = camera.deviceId;
+        //             option.text = camera.label;
+        //             cameraList.add(option);
+        //         });
+        //     } catch (error) {
+        //         console.error('Error enumerating devices:', error);
+        //     }
+        // }
+        // 
+        // async function changeCamera() {
+        //     const cameraFeed = document.getElementById('cameraFeed');
+        //     const cameraList = document.getElementById('cameraList');
+        //     
+        //     const selectedCameraId = cameraList.value;
+        //     cameraList.addEventListener('change', changeCamera)
+        //     
+        //     if (!selectedCameraId) {
+        //         alert('Selecione uma câmera antes de iniciar!');
+        //         return;
+        //     }
+        //     
+        //     try {
+        //         const stream = await navigator.mediaDevices.getUserMedia({
+        //             video: { deviceId: selectedCameraId }
+        //         });
+// // 
+        //         cameraFeed.srcObject = stream;
+        //     } catch (error) {
+        //         console.error('Error accessing camera:', error);
+        //     }
+        // }
+ // 
+        // async function startCamera() {
+        //     await changeCamera();
+        // }
+// 
+// 
+// 
+        // document.addEventListener('DOMContentLoaded', enumerateCameras);
     </script>
 </body>
 </html>
