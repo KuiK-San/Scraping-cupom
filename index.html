@@ -26,7 +26,7 @@
             const cameras = devices.filter(device => device.kind === 'videoinput');
             cameras.forEach(dispositivo => {dispositivos.push(dispositivo.deviceId)})
             
-            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[0]}})
+            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[1]}})
             .then(stream => {
                 console.log(stream)
                 videoElement.srcObject = stream
