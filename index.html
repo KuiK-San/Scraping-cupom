@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Selector</title>
+    <title>Camera QR Code Scanner</title>
 </head>
 <body>
     <h1>Selecione uma câmera</h1>
@@ -11,31 +11,19 @@
     <button onclick="startCamera()">Iniciar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
 
+    <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
     <script>
         const cameraList = document.getElementById('cameraList');
-
-        async function iniciarCam() {
-            const devices = await navigator.mediaDevices.enumerateDevices()
-            const cameras = devices.filter(device => device.kind === 'videoinput');
-            let device
-
-            //cameras.forEach(camera => {
-            //  if(camera.label)
-            //})
-
-            
-        }
+        const cameraFeed = document.getElementById('cameraFeed');
+        let videoStream;
 
         async function enumerateCameras() {
-            await navigator.mediaDevices.getUserMedia({video: true})
-            const cameraList = document.getElementById('cameraList');
-            
+            await navigator.mediaDevices.getUserMedia({ video: true });
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const cameras = devices.filter(device => device.kind === 'videoinput');
-                
+
                 cameras.forEach(camera => {
-                    console.log(camera.label)
                     const option = document.createElement('option');
                     option.value = camera.deviceId;
                     option.text = camera.label;
@@ -45,35 +33,57 @@
                 console.error('Error enumerating devices:', error);
             }
         }
-        
+
         async function changeCamera() {
-            const cameraFeed = document.getElementById('cameraFeed');
-            const cameraList = document.getElementById('cameraList');
-            
             const selectedCameraId = cameraList.value;
-            cameraList.addEventListener('change', changeCamera)
-            
+
             if (!selectedCameraId) {
                 alert('Selecione uma câmera antes de iniciar!');
                 return;
             }
-            
+
             try {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                }
+
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { deviceId: selectedCameraId }
                 });
-// 
+
+                videoStream = stream;
                 cameraFeed.srcObject = stream;
             } catch (error) {
                 console.error('Error accessing camera:', error);
             }
         }
-// 
+
         async function startCamera() {
             await changeCamera();
+            startQRCodeScanner();
         }
 
+        function startQRCodeScanner() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
 
+            const scan = () => {
+                canvas.width = cameraFeed.videoWidth;
+                canvas.height = cameraFeed.videoHeight;
+                context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
+
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                if (code) {
+                    alert('QR Code lido: ' + code.data);
+                }
+
+                requestAnimationFrame(scan);
+            };
+
+            scan();
+        }
 
         document.addEventListener('DOMContentLoaded', enumerateCameras);
     </script>
