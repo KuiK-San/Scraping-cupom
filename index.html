@@ -13,8 +13,8 @@
 
     <script>
         const cameraList = document.getElementById('cameraList');
-        navigator.mediaDevices.getUserMedia({video: true})
         async function enumerateCameras() {
+            await navigator.mediaDevices.getUserMedia({video: true})
             const cameraList = document.getElementById('cameraList');
             
             try {
@@ -22,6 +22,7 @@
                 const cameras = devices.filter(device => device.kind === 'videoinput');
                 
                 cameras.forEach(camera => {
+                    console.log(camera.label)
                     const option = document.createElement('option');
                     option.value = camera.deviceId;
                     option.text = camera.label || `Camera ${cameraList.length + 1}`;
