@@ -10,7 +10,7 @@
     <!-- <select id="cameraList" onchange="changeCamera()"></select> -->
     <button onclick="iniciarCam()">Iniciar Câmera</button>
     <button onclick="alterarCam()" id="alterar" style="display: none;">Alterar Câmera</button>
-    <video id="cameraFeed" width="640" height="480" autoplay></video>
+    <video id="cameraFeed" width="640" height="480"></video>
     <div class="cameras"></div>
     <div class="atual"></div>
     <div id="link"></div>
@@ -30,7 +30,7 @@
 
             cameras.forEach(dispositivo => {dispositivos.push(dispositivo.deviceId)})
             
-            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[1]}})
+            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[0]}})
             .then(stream => {
                 
                 videoElement.srcObject = stream
@@ -54,7 +54,7 @@
                 videoElement.play()
             })
             .catch(erro => console.error(erro))
-            document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
+            // document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
         }
 
         
