@@ -19,6 +19,8 @@
             const cameraFeed = document.getElementById('cameraFeed');
             const qrResult = document.getElementById('qrResult');
 
+            cameraList.addEventListener('change', startCamera)
+
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const cameras = devices.filter(device => device.kind === 'videoinput');
@@ -62,6 +64,7 @@
                         const code = jsQR(bitmap.data, bitmap.width, bitmap.height);
 
                         if (code) {
+                            console.log('lendoQRCode')
                             qrResult.textContent = `Resultado: ${code.data}`;
                         }
 
