@@ -34,23 +34,23 @@
             })
             .catch(erro => console.error(erro))
             document.querySelector('.cameras').innerHTML = dispositivos.length
-            document.querySelector('#alterar').style.display = 'block'
+            // document.querySelector('#alterar').style.display = 'block'
             
         }
-        async function alterarCam(){
-            atualDevice ++
-            if(atualDevice > dispositivos.length){
-                atualDevice = 0
-            }
-            await navigator.mediaDevices.getUserMedia({video: {deviceId: '8748daa0eb4b29bfd0e8875c2463b7ab84ce6b273a5aeb176da74d4ee0391b5f'}})
-            .then(stream => {
-                console.log(stream)
-                videoElement.srcObject = stream
-                videoElement.play()
-            })
-            .catch(erro => console.error(erro))
-            document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
-        }
+        // async function alterarCam(){
+        //     atualDevice ++
+        //     if(atualDevice > dispositivos.length){
+        //         atualDevice = 0
+        //     }
+        //     await navigator.mediaDevices.getUserMedia({video: {deviceId: '8748daa0eb4b29bfd0e8875c2463b7ab84ce6b273a5aeb176da74d4ee0391b5f'}})
+        //     .then(stream => {
+        //         console.log(stream)
+        //         videoElement.srcObject = stream
+        //         videoElement.play()
+        //     })
+        //     .catch(erro => console.error(erro))
+        //     document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
+        // }
 
         // async function enumerateCameras() {
         //     await navigator.mediaDevices.getUserMedia({video: true})
