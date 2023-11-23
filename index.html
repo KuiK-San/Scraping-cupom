@@ -3,23 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera QR Code Reader</title>
+    <title>Camera Selector</title>
 </head>
 <body>
     <h1>Selecione uma câmera</h1>
-    <select id="cameraList"></select>
+    <select id="cameraList" onchange="changeCamera()"></select>
     <button onclick="startCamera()">Iniciar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
-    <p id="qrResult">Result: </p>
 
-    <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function () {
+        async function enumerateCameras() {
             const cameraList = document.getElementById('cameraList');
-            const cameraFeed = document.getElementById('cameraFeed');
-            const qrResult = document.getElementById('qrResult');
-
-            cameraList.addEventListener('change', startCamera)
 
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
@@ -34,13 +28,12 @@
             } catch (error) {
                 console.error('Error enumerating devices:', error);
             }
-        });
+        }
 
-        async function startCamera() {
-            const cameraList = document.getElementById('cameraList');
+        async function changeCamera() {
             const cameraFeed = document.getElementById('cameraFeed');
-            const qrResult = document.getElementById('qrResult');
-
+            const cameraList = document.getElementById('cameraList');
+            
             const selectedCameraId = cameraList.value;
 
             if (!selectedCameraId) {
@@ -54,31 +47,16 @@
                 });
 
                 cameraFeed.srcObject = stream;
-
-                const track = stream.getVideoTracks()[0];
-                const imageCapture = new ImageCapture(track);
-
-                const scanQRCode = async () => {
-                    try {
-                        const bitmap = await imageCapture.grabFrame();
-                        const code = jsQR(bitmap.data, bitmap.width, bitmap.height);
-
-                        if (code) {
-                            console.log('lendoQRCode')
-                            qrResult.textContent = `Resultado: ${code.data}`;
-                        }
-
-                        requestAnimationFrame(scanQRCode);
-                    } catch (error) {
-                        console.error('Erro ao capturar frame:', error);
-                    }
-                };
-
-                scanQRCode();
             } catch (error) {
                 console.error('Error accessing camera:', error);
             }
         }
+
+        async function startCamera() {
+            await changeCamera();
+        }
+
+        document.addEventListener('DOMContentLoaded', enumerateCameras);
     </script>
 </body>
 </html>
