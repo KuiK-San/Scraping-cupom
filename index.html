@@ -31,8 +31,8 @@
                 videoElement.srcObject = stream
                 videoElement.play()
             })
-            .catch(erro => console.error(error))
-            document.querySelector('.cameras').innerHTML = dispositivos
+            .catch(erro => console.error(erro))
+            document.querySelector('.cameras').innerHTML = dispositivos.length
             
         }
         async function alterarCam(){
@@ -40,12 +40,12 @@
             if(atualDevice > dispositivos.length){
                 atualDevice = 0
             }
-            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[atualDevice]}})
+            await navigator.mediaDevices.getUserMedia({video: {deviceId:'c2d97b1d5a43b31424b0bf67717910f19dae529a351ee455c641f6dc219774ab'}})
             .then(stream => {
                 videoElement.srcObject = stream
                 videoElement.play()
             })
-            .catch(erro => console.error(error))
+            .catch(erro => console.error(erro))
             document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
         }
 
