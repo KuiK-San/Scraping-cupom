@@ -13,14 +13,14 @@
 
     <script>
         const cameraList = document.getElementById('cameraList');
-        cameraList.addEventListener('change', changeCamera)
+        navigator.getUserMedia(video)
         async function enumerateCameras() {
             const cameraList = document.getElementById('cameraList');
-
+            
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const cameras = devices.filter(device => device.kind === 'videoinput');
-
+                
                 cameras.forEach(camera => {
                     const option = document.createElement('option');
                     option.value = camera.deviceId;
@@ -31,18 +31,19 @@
                 console.error('Error enumerating devices:', error);
             }
         }
-
+        
         async function changeCamera() {
             const cameraFeed = document.getElementById('cameraFeed');
             const cameraList = document.getElementById('cameraList');
             
             const selectedCameraId = cameraList.value;
-
+            cameraList.addEventListener('change', changeCamera)
+            
             if (!selectedCameraId) {
                 alert('Selecione uma câmera antes de iniciar!');
                 return;
             }
-
+            
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { deviceId: selectedCameraId }
