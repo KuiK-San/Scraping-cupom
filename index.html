@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Selector</title>
+    <title>Camera QR Code Reader</title>
 </head>
 <body>
     <h1>Selecione uma câmera</h1>
     <select id="cameraList"></select>
     <button onclick="startCamera()">Iniciar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
+    <p id="qrResult">Result: </p>
 
+    <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
             const cameraList = document.getElementById('cameraList');
             const cameraFeed = document.getElementById('cameraFeed');
+            const qrResult = document.getElementById('qrResult');
 
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
@@ -34,6 +37,7 @@
         async function startCamera() {
             const cameraList = document.getElementById('cameraList');
             const cameraFeed = document.getElementById('cameraFeed');
+            const qrResult = document.getElementById('qrResult');
 
             const selectedCameraId = cameraList.value;
 
@@ -48,6 +52,26 @@
                 });
 
                 cameraFeed.srcObject = stream;
+
+                const track = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(track);
+
+                const scanQRCode = async () => {
+                    try {
+                        const bitmap = await imageCapture.grabFrame();
+                        const code = jsQR(bitmap.data, bitmap.width, bitmap.height);
+
+                        if (code) {
+                            qrResult.textContent = `Resultado: ${code.data}`;
+                        }
+
+                        requestAnimationFrame(scanQRCode);
+                    } catch (error) {
+                        console.error('Erro ao capturar frame:', error);
+                    }
+                };
+
+                scanQRCode();
             } catch (error) {
                 console.error('Error accessing camera:', error);
             }
