@@ -30,7 +30,7 @@
 
             cameras.forEach(dispositivo => {dispositivos.push(dispositivo.deviceId)})
             
-            await navigator.mediaDevices.getUserMedia({video: {deviceId: dispositivos[1]}})
+            await navigator.mediaDevices.getUserMedia({video: {deviceId: dispositivos[2]}})
             .then(stream => {
                 
                 videoElement.srcObject = stream
