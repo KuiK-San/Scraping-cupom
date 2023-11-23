@@ -26,8 +26,9 @@
             const cameras = devices.filter(device => device.kind === 'videoinput');
             cameras.forEach(dispositivo => {dispositivos.push(dispositivo.deviceId)})
             
-            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[atualDevice]}})
+            await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[0]}})
             .then(stream => {
+                console.log(stream)
                 videoElement.srcObject = stream
                 videoElement.play()
             })
@@ -43,6 +44,7 @@
             }
             await navigator.mediaDevices.getUserMedia({video: {deviceId: '8748daa0eb4b29bfd0e8875c2463b7ab84ce6b273a5aeb176da74d4ee0391b5f'}})
             .then(stream => {
+                console.log(stream)
                 videoElement.srcObject = stream
                 videoElement.play()
             })
