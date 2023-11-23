@@ -8,11 +8,24 @@
 <body>
     <h1>Selecione uma câmera</h1>
     <select id="cameraList" onchange="changeCamera()"></select>
-    <button onclick="startCamera()">Iniciar Câmera</button>
+    <button onclick="iniciarCam()">Iniciar Câmera</button>
     <video id="cameraFeed" width="640" height="480" autoplay></video>
 
     <script>
         const cameraList = document.getElementById('cameraList');
+
+        async function iniciarCam() {
+            const devices = await navigator.mediaDevices.enumerateDevices()
+            const cameras = devices.filter(device => device.kind === 'videoinput');
+            let device
+
+            cameras.forEach(camera => {
+                if(camera.label)
+            })
+
+            
+        }
+
         async function enumerateCameras() {
             await navigator.mediaDevices.getUserMedia({video: true})
             const cameraList = document.getElementById('cameraList');
@@ -49,13 +62,13 @@
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { deviceId: selectedCameraId }
                 });
-
+// 
                 cameraFeed.srcObject = stream;
             } catch (error) {
                 console.error('Error accessing camera:', error);
             }
         }
-
+// 
         async function startCamera() {
             await changeCamera();
         }
