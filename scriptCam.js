@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function startCamera() {
         let selectedCameraId = cameraList.value
         const constraints = {
-            video: { deviceId: { exact: selectedCameraId } },
+            video: { deviceId: { exact: selectedCameraId }, facingMode: 'environment' },
         };
 
         navigator.mediaDevices
