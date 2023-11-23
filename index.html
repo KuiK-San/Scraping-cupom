@@ -13,6 +13,7 @@
     <video id="cameraFeed" width="640" height="480" autoplay></video>
     <div class="cameras"></div>
     <div class="atual"></div>
+    <div id="link"></div>
 
 
     <script src="https://cdn.rawgit.com/cozmo/jsQR/master/dist/jsQR.js"></script>
@@ -26,33 +27,82 @@
             dispositivos = []
             const devices = await navigator.mediaDevices.enumerateDevices()
             const cameras = devices.filter(device => device.kind === 'videoinput');
+
             cameras.forEach(dispositivo => {dispositivos.push(dispositivo.deviceId)})
             
             await navigator.mediaDevices.getUserMedia({video: {deviceId:dispositivos[1]}})
             .then(stream => {
-                console.log(stream)
+                
                 videoElement.srcObject = stream
                 // videoElement.play()
+                requestAnimationFrame(tick)
             })
             .catch(erro => console.error(erro))
-            document.querySelector('.cameras').innerHTML = dispositivos.length
+            // document.querySelector('.cameras').innerHTML = dispositivos.length
             // document.querySelector('#alterar').style.display = 'block'
             
         }
-        // async function alterarCam(){
-        //     atualDevice ++
-        //     if(atualDevice > dispositivos.length){
-        //         atualDevice = 0
-        //     }
-        //     await navigator.mediaDevices.getUserMedia({video: {deviceId: '8748daa0eb4b29bfd0e8875c2463b7ab84ce6b273a5aeb176da74d4ee0391b5f'}})
-        //     .then(stream => {
-        //         console.log(stream)
-        //         videoElement.srcObject = stream
-        //         videoElement.play()
-        //     })
-        //     .catch(erro => console.error(erro))
-        //     document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
-        // }
+        async function alterarCam(){
+            atualDevice ++
+            if(atualDevice > dispositivos.length){
+                atualDevice = 0
+            }
+            await navigator.mediaDevices.getUserMedia({video: {deviceId: '8748daa0eb4b29bfd0e8875c2463b7ab84ce6b273a5aeb176da74d4ee0391b5f'}})
+            .then(stream => {
+                console.log(stream)
+                videoElement.srcObject = stream
+                videoElement.play()
+            })
+            .catch(erro => console.error(erro))
+            document.querySelector('.cameras').innerHTML = dispositivos[atualDevice] + "    " + atualDevice
+        }
+
+        
+        function tick(){
+            if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+                const canvas = document.createElement("canvas");
+                canvas.width = videoElement.videoWidth;
+                canvas.height = videoElement.videoHeight;
+                const context = canvas.getContext("2d");
+                context.drawImage(
+                    videoElement,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+                const imageData = context.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+                const code = jsQR(
+                    imageData.data,
+                    imageData.width,
+                    imageData.height,
+                    {
+                        inversionAttempts: "dontInvert",
+                    }
+                );
+
+            if (code) {
+                setTimeout(() => {
+                    document.querySelector(
+                        "#link"
+                    ).innerHTML = `<p>QR Code detectado <span id="data-code">${code.data}</span></p>`;
+                    document.querySelector('#enviar').style.display = 'block'
+
+                }, 2000)
+            }
+
+            requestAnimationFrame(tick);
+        } else {
+            requestAnimationFrame(tick);
+        }
+        }
+
+
 
         // async function enumerateCameras() {
         //     await navigator.mediaDevices.getUserMedia({video: true})
